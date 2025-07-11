@@ -27,39 +27,59 @@ resource "aws_s3_bucket_public_access_block" "block" {
 
 resource "aws_s3_bucket_policy" "public_policy" {
   bucket = aws_s3_bucket.site_bucket.id
+
   depends_on = [
-    aws_s3_bucket_public_access_block.block
+    aws_s3_bucket_public_access_block.block,
+    aws_cloudfront_origin_access_identity.oai
   ]
 
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {
+        Sid    = "AllowCloudFrontServicePrincipal",
         Effect = "Allow",
-        Principal = "*",
-        Action   = "s3:GetObject",
+        Principal = {
+          AWS = aws_cloudfront_origin_access_identity.oai.iam_arn
+        },
+        Action = "s3:GetObject",
         Resource = "${aws_s3_bucket.site_bucket.arn}/*"
       }
     ]
   })
 }
+resource "aws_cloudfront_origin_access_identity" "oai" {
+  comment = "OAI for accessing the S3 bucket"
+}
+
 
 resource "aws_cloudfront_distribution" "cdn" {
   origin {
-    domain_name = aws_s3_bucket.site_bucket.website_endpoint
+    domain_name = aws_s3_bucket.site_bucket.bucket_regional_domain_name
     origin_id   = "s3-origin"
 
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "http-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.oai.cloudfront_access_identity_path
     }
   }
 
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"
+
+  aliases = [
+    "freetheforgottencharity.org",
+    "www.freetheforgottencharity.org"
+  ]
+
+  origin {
+  domain_name = aws_s3_bucket.site_bucket.bucket_regional_domain_name
+  origin_id   = "s3-origin"
+
+  s3_origin_config {
+    origin_access_identity = aws_cloudfront_origin_access_identity.oai.cloudfront_access_identity_path
+   }
+  }
 
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
@@ -68,7 +88,6 @@ resource "aws_cloudfront_distribution" "cdn" {
 
     forwarded_values {
       query_string = false
-
       cookies {
         forward = "none"
       }
@@ -77,17 +96,21 @@ resource "aws_cloudfront_distribution" "cdn" {
     viewer_protocol_policy = "redirect-to-https"
   }
 
+  price_class = "PriceClass_100"
+
+  viewer_certificate {
+    acm_certificate_arn = "arn:aws:acm:us-east-1:645240995945:certificate/d7ce72fc-b6ae-4564-9509-ccc3baad48ea"
+    ssl_support_method  = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
+  }
+
   restrictions {
     geo_restriction {
       restriction_type = "none"
     }
   }
 
-  viewer_certificate {
-    cloudfront_default_certificate = true
-  }
-
   tags = {
-    Project = "CharityMicrosite"
+    Name = "Charity-CDN"
   }
 }
