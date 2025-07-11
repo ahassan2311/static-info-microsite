@@ -53,3 +53,24 @@ footer {
   font-size: 14px;
   color: #333;
 }
+
+.logo {
+  width: 100px;
+  height: auto;   
+  display: block; 
+}
+
+.headline {
+  font-size: 58px;
+}
+
+.beau-rivage-regular {
+  font-family: "Beau Rivage", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+nav a {
+  font-size: 20px; 
+  font-weight: bold; 
+}

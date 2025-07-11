@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "eu-west=2"
+  region = "eu-west-2"
 }
 
 resource "aws_s3_bucket" "site_bucket" {
@@ -27,6 +27,9 @@ resource "aws_s3_bucket_public_access_block" "block" {
 
 resource "aws_s3_bucket_policy" "public_policy" {
   bucket = aws_s3_bucket.site_bucket.id
+  depends_on = [
+    aws_s3_bucket_public_access_block.block
+  ]
 
   policy = jsonencode({
     Version = "2012-10-17",
