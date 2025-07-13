@@ -3,14 +3,9 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "site_bucket" {
-  bucket = var.bucket_name
+  bucket        = var.bucket_name
   force_destroy = true
-
-  website {
-    index_document = "index.html"
-    error_document = "error.html"
-  }
-
+  
   tags = {
     Project = "CharityMicrosite"
   }
@@ -42,7 +37,7 @@ resource "aws_s3_bucket_policy" "public_policy" {
         Principal = {
           AWS = aws_cloudfront_origin_access_identity.oai.iam_arn
         },
-        Action = "s3:GetObject",
+        Action   = "s3:GetObject",
         Resource = "${aws_s3_bucket.site_bucket.arn}/*"
       }
     ]
@@ -72,15 +67,6 @@ resource "aws_cloudfront_distribution" "cdn" {
     "www.freetheforgottencharity.org"
   ]
 
-  origin {
-  domain_name = aws_s3_bucket.site_bucket.bucket_regional_domain_name
-  origin_id   = "s3-origin"
-
-  s3_origin_config {
-    origin_access_identity = aws_cloudfront_origin_access_identity.oai.cloudfront_access_identity_path
-   }
-  }
-
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
@@ -99,8 +85,8 @@ resource "aws_cloudfront_distribution" "cdn" {
   price_class = "PriceClass_100"
 
   viewer_certificate {
-    acm_certificate_arn = "arn:aws:acm:us-east-1:645240995945:certificate/d7ce72fc-b6ae-4564-9509-ccc3baad48ea"
-    ssl_support_method  = "sni-only"
+    acm_certificate_arn      = "arn:aws:acm:us-east-1:645240995945:certificate/d7ce72fc-b6ae-4564-9509-ccc3baad48ea"
+    ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }
 
