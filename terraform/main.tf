@@ -5,7 +5,7 @@ provider "aws" {
 resource "aws_s3_bucket" "site_bucket" {
   bucket        = var.bucket_name
   force_destroy = true
-  
+
   tags = {
     Project = "CharityMicrosite"
   }
@@ -68,9 +68,11 @@ resource "aws_cloudfront_distribution" "cdn" {
   ]
 
   default_cache_behavior {
+    target_origin_id       = "s3-origin"
+    viewer_protocol_policy = "redirect-to-https"
+
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "s3-origin"
 
     forwarded_values {
       query_string = false
@@ -79,10 +81,12 @@ resource "aws_cloudfront_distribution" "cdn" {
       }
     }
 
-    viewer_protocol_policy = "redirect-to-https"
+    min_ttl     = 60
+    default_ttl = 300      # 5 minutes
+    max_ttl     = 43200     # 12 hours
   }
 
-  price_class = "PriceClass_100"
+  price_class = "PriceClass_100" # Use cheaper edge locations
 
   viewer_certificate {
     acm_certificate_arn      = "arn:aws:acm:us-east-1:645240995945:certificate/d7ce72fc-b6ae-4564-9509-ccc3baad48ea"
@@ -100,3 +104,35 @@ resource "aws_cloudfront_distribution" "cdn" {
     Name = "Charity-CDN"
   }
 }
+
+resource "aws_route53_record" "root_domain" {
+  zone_id = data.aws_route53_zone.selected.zone_id
+  name    = "freetheforgottencharity.org"
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.cdn.domain_name
+    zone_id                = aws_cloudfront_distribution.cdn.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+data "aws_route53_zone" "selected" {
+  name         = "freetheforgottencharity.org"
+  private_zone = false
+}
+
+
+resource "aws_route53_record" "www_domain" {
+  zone_id = data.aws_route53_zone.selected.zone_id
+  name    = "www.freetheforgottencharity.org"
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.cdn.domain_name
+    zone_id                = aws_cloudfront_distribution.cdn.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
+
