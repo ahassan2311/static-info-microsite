@@ -1,4 +1,4 @@
-name: Terraform Provision & Deploy Static Site #test3
+name: Terraform Provision & Deploy Static Site #test3b
 
 on:
   push:
