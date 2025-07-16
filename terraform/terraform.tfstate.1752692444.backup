@@ -1,0 +1,308 @@
+{
+  "version": 4,
+  "terraform_version": "1.12.2",
+  "serial": 96,
+  "lineage": "fe186b31-bd8d-4408-b2ab-718dfec41695",
+  "outputs": {
+    "bucket_name": {
+      "value": "ftf-charity-microsite-uk-2025",
+      "type": "string"
+    },
+    "cloudfront_url": {
+      "value": null,
+      "type": "string"
+    },
+    "custom_domain_url": {
+      "value": "https://freetheforgottencharity.org",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "data",
+      "type": "aws_route53_zone",
+      "name": "selected",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:route53:::hostedzone/Z1036882F2YHO5L6VSIM",
+            "caller_reference": "RISWorkflow-RD:6806c0d5-1053-4c60-8f98-fb1e4f9bb1e9",
+            "comment": "HostedZone created by Route53 Registrar",
+            "id": "Z1036882F2YHO5L6VSIM",
+            "linked_service_description": null,
+            "linked_service_principal": null,
+            "name": "freetheforgottencharity.org",
+            "name_servers": [
+              "ns-1727.awsdns-23.co.uk",
+              "ns-466.awsdns-58.com",
+              "ns-1157.awsdns-16.org",
+              "ns-659.awsdns-18.net"
+            ],
+            "primary_name_server": "ns-1727.awsdns-23.co.uk",
+            "private_zone": false,
+            "resource_record_set_count": 6,
+            "tags": {},
+            "vpc_id": null,
+            "zone_id": "Z1036882F2YHO5L6VSIM"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_cloudfront_origin_access_identity",
+      "name": "oai",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:cloudfront::645240995945:origin-access-identity/E21FR30HASXK8F",
+            "caller_reference": "terraform-20250715153619825900000001",
+            "cloudfront_access_identity_path": "origin-access-identity/cloudfront/E21FR30HASXK8F",
+            "comment": "OAI for accessing the S3 bucket",
+            "etag": "E3UN6WX5RRO2AG",
+            "iam_arn": "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity E21FR30HASXK8F",
+            "id": "E21FR30HASXK8F",
+            "s3_canonical_user_id": "b3e83592ef3404d97542eab9185486774ddf1ad8943a863b346c3bcc2e5d2856f166348ff22f91f83fe41be2a1685d5a"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_route53_record",
+      "name": "root_domain",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 2,
+          "attributes": {
+            "alias": [
+              {
+                "evaluate_target_health": false,
+                "name": "d3vpopo7pgla6o.cloudfront.net",
+                "zone_id": "Z2FDTNDATAQYW2"
+              }
+            ],
+            "allow_overwrite": null,
+            "cidr_routing_policy": [],
+            "failover_routing_policy": [],
+            "fqdn": "freetheforgottencharity.org",
+            "geolocation_routing_policy": [],
+            "geoproximity_routing_policy": [],
+            "health_check_id": "",
+            "id": "Z1036882F2YHO5L6VSIM_freetheforgottencharity.org_A",
+            "latency_routing_policy": [],
+            "multivalue_answer_routing_policy": false,
+            "name": "freetheforgottencharity.org",
+            "records": [],
+            "set_identifier": "",
+            "timeouts": null,
+            "ttl": 0,
+            "type": "A",
+            "weighted_routing_policy": [],
+            "zone_id": "Z1036882F2YHO5L6VSIM"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxODAwMDAwMDAwMDAwLCJkZWxldGUiOjE4MDAwMDAwMDAwMDAsInVwZGF0ZSI6MTgwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMiJ9",
+          "dependencies": [
+            "aws_cloudfront_distribution.cdn",
+            "aws_cloudfront_origin_access_identity.oai",
+            "aws_s3_bucket.site_bucket",
+            "data.aws_route53_zone.selected"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_route53_record",
+      "name": "www_domain",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 2,
+          "attributes": {
+            "alias": [
+              {
+                "evaluate_target_health": false,
+                "name": "d3vpopo7pgla6o.cloudfront.net",
+                "zone_id": "Z2FDTNDATAQYW2"
+              }
+            ],
+            "allow_overwrite": null,
+            "cidr_routing_policy": [],
+            "failover_routing_policy": [],
+            "fqdn": "www.freetheforgottencharity.org",
+            "geolocation_routing_policy": [],
+            "geoproximity_routing_policy": [],
+            "health_check_id": "",
+            "id": "Z1036882F2YHO5L6VSIM_www.freetheforgottencharity.org_A",
+            "latency_routing_policy": [],
+            "multivalue_answer_routing_policy": false,
+            "name": "www.freetheforgottencharity.org",
+            "records": [],
+            "set_identifier": "",
+            "timeouts": null,
+            "ttl": 0,
+            "type": "A",
+            "weighted_routing_policy": [],
+            "zone_id": "Z1036882F2YHO5L6VSIM"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxODAwMDAwMDAwMDAwLCJkZWxldGUiOjE4MDAwMDAwMDAwMDAsInVwZGF0ZSI6MTgwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMiJ9",
+          "dependencies": [
+            "aws_cloudfront_distribution.cdn",
+            "aws_cloudfront_origin_access_identity.oai",
+            "aws_s3_bucket.site_bucket",
+            "data.aws_route53_zone.selected"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "site_bucket",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "acceleration_status": "",
+            "acl": null,
+            "arn": "arn:aws:s3:::ftf-charity-microsite-uk-2025",
+            "bucket": "ftf-charity-microsite-uk-2025",
+            "bucket_domain_name": "ftf-charity-microsite-uk-2025.s3.amazonaws.com",
+            "bucket_prefix": "",
+            "bucket_region": "eu-west-2",
+            "bucket_regional_domain_name": "ftf-charity-microsite-uk-2025.s3.eu-west-2.amazonaws.com",
+            "cors_rule": [],
+            "force_destroy": false,
+            "grant": [
+              {
+                "id": "4cef775a94422aefc68ffe7c97ea4c922161009ff8a4a98d0ca9f040ee302508",
+                "permissions": [
+                  "FULL_CONTROL"
+                ],
+                "type": "CanonicalUser",
+                "uri": ""
+              }
+            ],
+            "hosted_zone_id": "Z3GKZC51ZF0DB4",
+            "id": "ftf-charity-microsite-uk-2025",
+            "lifecycle_rule": [],
+            "logging": [],
+            "object_lock_configuration": [],
+            "object_lock_enabled": false,
+            "policy": "{\"Statement\":[{\"Action\":\"s3:GetObject\",\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity EQXF6FY08UE1W\"},\"Resource\":\"arn:aws:s3:::ftf-charity-microsite-uk-2025/*\",\"Sid\":\"AllowCloudFrontServicePrincipal\"}],\"Version\":\"2012-10-17\"}",
+            "region": "eu-west-2",
+            "replication_configuration": [],
+            "request_payer": "BucketOwner",
+            "server_side_encryption_configuration": [
+              {
+                "rule": [
+                  {
+                    "apply_server_side_encryption_by_default": [
+                      {
+                        "kms_master_key_id": "",
+                        "sse_algorithm": "AES256"
+                      }
+                    ],
+                    "bucket_key_enabled": false
+                  }
+                ]
+              }
+            ],
+            "tags": {
+              "Project": "CharityMicrosite"
+            },
+            "tags_all": {
+              "Project": "CharityMicrosite"
+            },
+            "timeouts": null,
+            "versioning": [
+              {
+                "enabled": false,
+                "mfa_delete": false
+              }
+            ],
+            "website": [],
+            "website_domain": null,
+            "website_endpoint": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "identity": {
+            "account_id": "645240995945",
+            "bucket": "ftf-charity-microsite-uk-2025",
+            "region": "eu-west-2"
+          },
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjM2MDAwMDAwMDAwMDAsInJlYWQiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMCJ9"
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket_policy",
+      "name": "public_policy",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "bucket": "ftf-charity-microsite-uk-2025",
+            "id": "ftf-charity-microsite-uk-2025",
+            "policy": "{\"Statement\":[{\"Action\":\"s3:GetObject\",\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity EQXF6FY08UE1W\"},\"Resource\":\"arn:aws:s3:::ftf-charity-microsite-uk-2025/*\",\"Sid\":\"AllowCloudFrontServicePrincipal\"}],\"Version\":\"2012-10-17\"}",
+            "region": "eu-west-2"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_cloudfront_origin_access_identity.oai",
+            "aws_s3_bucket.site_bucket",
+            "aws_s3_bucket_public_access_block.block"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket_public_access_block",
+      "name": "block",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "block_public_acls": false,
+            "block_public_policy": false,
+            "bucket": "ftf-charity-microsite-uk-2025",
+            "id": "ftf-charity-microsite-uk-2025",
+            "ignore_public_acls": false,
+            "region": "eu-west-2",
+            "restrict_public_buckets": false
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_s3_bucket.site_bucket"
+          ]
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}
