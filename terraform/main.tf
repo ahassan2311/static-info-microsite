@@ -1,3 +1,13 @@
+terraform {
+  backend "s3" {
+    bucket         = "ftf-charity-terraform-state"
+    key            = "charity-microsite/terraform.tfstate"
+    region         = "eu-west-2"
+    dynamodb_table = "terraform-locks"
+    encrypt        = true
+  }
+}
+
 provider "aws" {
   region = "eu-west-2"
 }
