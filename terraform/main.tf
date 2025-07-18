@@ -1,23 +1,26 @@
+# Configure the backend to store Terraform state remotely in S3 and lock it using DynamoDB
 terraform {
   backend "s3" {
-    bucket         = "ftf-charity-terraform-state"
-    key            = "charity-microsite/terraform.tfstate"
-    region         = "eu-west-2"
-    dynamodb_table = "terraform-locks"
-    encrypt        = true
+    bucket         = "ftf-charity-terraform-state"                      # S3 bucket to store the state file
+    key            = "charity-microsite/terraform.tfstate"              # Path within the bucket
+    region         = "eu-west-2"                                        # AWS region of the bucket
+    dynamodb_table = "terraform-locks"                                  # DynamoDB table for state locking
+    encrypt        = true                                               # Encrypt the state file at rest
   }
 }
 
+# Set the default AWS provider region
 provider "aws" {
   region = "eu-west-2"
 }
 
+# Create the S3 bucket to host the static website
 resource "aws_s3_bucket" "site_bucket" {
   bucket        = var.bucket_name
-  force_destroy = true
+  force_destroy = true                                                # Allows force deletion of non-empty bucket
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = true                                            # Prevent accidental deletion of bucket via Terraform
   }
 
   tags = {
@@ -25,6 +28,7 @@ resource "aws_s3_bucket" "site_bucket" {
   }
 }
 
+# Configure the bucket to allow public access (required for CloudFront access)
 resource "aws_s3_bucket_public_access_block" "block" {
   bucket = aws_s3_bucket.site_bucket.id
 
@@ -34,6 +38,7 @@ resource "aws_s3_bucket_public_access_block" "block" {
   restrict_public_buckets = false
 }
 
+# Attach a bucket policy to allow CloudFront Origin Access Identity (OAI) to read from the bucket
 resource "aws_s3_bucket_policy" "public_policy" {
   bucket = aws_s3_bucket.site_bucket.id
 
@@ -57,11 +62,13 @@ resource "aws_s3_bucket_policy" "public_policy" {
     ]
   })
 }
+
+# Create a CloudFront Origin Access Identity to securely access S3
 resource "aws_cloudfront_origin_access_identity" "oai" {
   comment = "OAI for accessing the S3 bucket"
 }
 
-
+# Create the CloudFront distribution to serve the site globally
 resource "aws_cloudfront_distribution" "cdn" {
   origin {
     domain_name = aws_s3_bucket.site_bucket.bucket_regional_domain_name
@@ -77,8 +84,8 @@ resource "aws_cloudfront_distribution" "cdn" {
   default_root_object = "index.html"
 
   aliases = [
-    "freetheforgottencharity.org",
-    "www.freetheforgottencharity.org"
+    "freetheforgottencharity.org",                    # Custom domain (root)
+    "www.freetheforgottencharity.org"                # Custom domain (www)
   ]
 
   default_cache_behavior {
@@ -96,11 +103,11 @@ resource "aws_cloudfront_distribution" "cdn" {
     }
 
     min_ttl     = 60
-    default_ttl = 300      # 5 minutes
+    default_ttl = 300       # 5 minutes
     max_ttl     = 43200     # 12 hours
   }
 
-  price_class = "PriceClass_100" # Use cheaper edge locations
+  price_class = "PriceClass_100"    # Use lowest-cost edge locations
 
   viewer_certificate {
     acm_certificate_arn      = "arn:aws:acm:us-east-1:645240995945:certificate/d7ce72fc-b6ae-4564-9509-ccc3baad48ea"
@@ -119,6 +126,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   }
 }
 
+# Route 53 record for the root domain (A record pointing to CloudFront)
 resource "aws_route53_record" "root_domain" {
   zone_id = data.aws_route53_zone.selected.zone_id
   name    = "freetheforgottencharity.org"
@@ -131,12 +139,13 @@ resource "aws_route53_record" "root_domain" {
   }
 }
 
+# Fetch the Route 53 hosted zone info
 data "aws_route53_zone" "selected" {
   name         = "freetheforgottencharity.org"
   private_zone = false
 }
 
-
+# Route 53 record for www subdomain (also an A record alias to CloudFront)
 resource "aws_route53_record" "www_domain" {
   zone_id = data.aws_route53_zone.selected.zone_id
   name    = "www.freetheforgottencharity.org"
@@ -148,5 +157,6 @@ resource "aws_route53_record" "www_domain" {
     evaluate_target_health = false
   }
 }
+
 
 
