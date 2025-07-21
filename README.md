@@ -76,7 +76,7 @@ This microsite provides visitors with essential information about the charity’
 
 ## License
 
-This project is for educational purposes and is not intended for production or open-source use.
+This project is for educational purposes and is not intended for open-source use.
 
 ---
 
