@@ -1,41 +1,42 @@
-name: Terraform Provision & Deploy Static Site #<!-- CI/CD Test Trigger 5s -->
+# GitHub Actions workflow to provision infrastructure and deploy a static site using Terraform
+name: Terraform Provision & Deploy Static Site
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main" ] # Trigger workflow only on push to main branch
 
 jobs:
   provision-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Use latest Ubuntu runner
 
     steps:
-    - name: Checkout repository
+    - name: Checkout repository # Clone repo contents into runner
       uses: actions/checkout@v4
 
-    - name: Setup AWS credentials
+    - name: Setup AWS credentials # Configure AWS credentials from GitHub Secrets
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
-    - name: Install Terraform
+    - name: Install Terraform # Setup Terraform on the runner
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: 1.8.3
 
-    - name: Terraform Init
+    - name: Terraform Init # Initialize Terraform backend and providers
       working-directory: terraform
       run: terraform init
 
-    - name: Terraform Plan
+    - name: Terraform Plan # Show planned infrastructure changes
       working-directory: terraform
       run: terraform plan
 
-    - name: Terraform Apply
+    - name: Terraform Apply # Apply infrastructure changes
       working-directory: terraform
       run: terraform apply -auto-approve
 
-    - name: Sync site folder to S3
+    - name: Sync site folder to S3 # Deploy static site files to S3
       run: |
         aws s3 sync ./site s3://${{ secrets.TF_BUCKET_NAME }} --delete
