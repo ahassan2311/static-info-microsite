@@ -3,18 +3,19 @@
 *.tfstate
 *.tfstate.backup
 .terraform.lock.hcl
+terraform.tfstate
 
-# AWS credentials (just in case)
+# AWS credentials
 .env
 *.pem
 
-# Node.js (if used)
+# Node.js
 node_modules/
 dist/
 
 # Logs
 *.log
 
-# VS Code settings (optional)
+# VS Code settings
 .vscode/
 "terraform.tfstate*" 
