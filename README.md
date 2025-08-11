@@ -6,7 +6,7 @@ A static informational website for *Free The Forgotten* — a charity dedicated 
 
 ## Project Overview
 
-This microsite provides visitors with essential information about the charity’s mission, volunteering opportunities, and ways to donate. The website is deployed as a static site on AWS S3, delivered globally through CloudFront CDN with HTTPS, and uses Route 53 for DNS management.
+This microsite provides visitors with essential information about the charity’s mission and volunteering opportunities. The website is deployed as a static site on AWS S3, delivered globally through CloudFront CDN with HTTPS, and uses Route 53 for DNS management.
 
 ---
 

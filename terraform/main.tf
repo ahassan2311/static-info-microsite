@@ -20,7 +20,7 @@ resource "aws_s3_bucket" "site_bucket" {
   force_destroy = true                                                # Allows force deletion of non-empty bucket
 
   lifecycle {
-    prevent_destroy = true                                            # Prevent accidental deletion of bucket via Terraform
+    prevent_destroy = false                                            # Prevent accidental deletion of bucket via Terraform
   }
 
   tags = {
