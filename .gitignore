@@ -1,10 +1,11 @@
 # Terraform
-.terraform/
 *.tfstate
-*.tfstate.backup
+*.tfstate.*
+terraform.tfstate*
+.terraform/
 .terraform.lock.hcl
-terraform.tfstate
-
+terraform.tfvars
+*.auto.tfvars
 # AWS credentials
 .env
 *.pem
